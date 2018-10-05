@@ -1,5 +1,6 @@
 import sys
 import socket
+from time import sleep
 import ICS_authentication_protocol as ap
 
 def sendint(i):
@@ -58,7 +59,9 @@ if __name__ == '__main__':
     print("\n\nR: ", bin(R))
     ##### Send IDS N R #####
     MTU_Socket.send(sendint(IDS_New))
+    sleep(0.1)
     MTU_Socket.send(sendint(N))
+    sleep(0.1)
     MTU_Socket.send(sendint(R))
     
     
