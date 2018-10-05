@@ -12,9 +12,9 @@ def sendstr(i):
 if __name__ == '__main__':
     
     # Initial Variable (All of variables are 4*8=32 bits)
-    IDS_New = 0x11001001000011111101101010100010  # 第一次執行隨便設(但MTU與RTU要一樣)
+    IDS_New = 2**(96-1)  # 第一次執行隨便設(但MTU與RTU要一樣)
     IDS_Old = 0
-    K_New = 0x10101101111110000101010001011000    # 第一次執行隨便設(但MTU與RTU要一樣)
+    K_New = 2**48    # 第一次執行隨便設(但MTU與RTU要一樣)
     K_Old = 0
     pi = 11001001000011111101101010100010  # pi = 11.001001000011111101101010100010 去掉小數點取32位
     e  = 10101101111110000101010001011000  # e  = 10.101101111110000101010001011000 去掉小數點取32位    
@@ -26,6 +26,7 @@ if __name__ == '__main__':
     RTU_Socket.bind((host, port))        
 
     RTU_Socket.listen(5)  # 可接受客戶端個數為5
+    print("RTU Server Start!")
     while True:
         RTU_Client, addr = RTU_Socket.accept()
         print('連結地址：', addr)
@@ -33,11 +34,12 @@ if __name__ == '__main__':
         RTU_Client.send(sendstr("Connect to RTU!"))
         
         ##### receive IDS N R #####
-        MTU_IDS = RTU_Client.recv(1024) # int(RTU_Client.recv(1024), 2)
-        MTU_N   = RTU_Client.recv(1024) # int(RTU_Client.recv(1024), 2)
-        MTU_R   = RTU_Client.recv(1024) # int(RTU_Client.recv(1024), 2)
+        MTU_IDS = int(RTU_Client.recv(1024).decode('ascii')[2:], 2) # int(RTU_Client.recv(1024), 2)
+        MTU_N   = int(RTU_Client.recv(1024).decode('ascii')[2:], 2) # int(RTU_Client.recv(1024), 2)
+        print("MTU_N = ", bin(MTU_N))      ############################################################### 這裡MTU案太多次有時候會收到 N跟R 連起來的數值
+        MTU_R   = int(RTU_Client.recv(1024).decode('ascii')[2:], 2) # int(RTU_Client.recv(1024), 2)
+        print("\n\nMTU_R = ", bin(MTU_R))
         
-        print(MTU_IDS)
         
         """ RTU Obtain {IDS, N, R}""" 
         # Check MTU use IDS_New or IDS_Old
@@ -66,7 +68,6 @@ if __name__ == '__main__':
         ''' verify RTU_R == MTU_R '''
         if(R != MTU_R):
             RTU_Client.send(sendstr("Mismatch R"))
-            RTU_Client.close()
         else:
             # Calculate "c, d"
             c = ap.MQR([pi, n_list[0], K_list[1], n_list[2]])
@@ -102,6 +103,10 @@ if __name__ == '__main__':
             # Calculate "IDS_New, K_New"
             IDS_New = A_list[0] ^ A_list[1] ^ A_list[2]
             K_New = B_list[0] ^ B_list[1] ^ B_list[2]
+            
+            print("IDS_New : " , IDS_New)
+            print("\n\nK_New : " , K_New)
+            print("----------------------------")
         
         
         
