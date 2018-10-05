@@ -78,14 +78,21 @@ if __name__ == '__main__':
     
     
     
-    """ RTU Obtain {IDS, N, R}""" #不知道 IDS要幹嘛
+    """ RTU Obtain {IDS, N, R}""" 
     # Initial Variable (All of variables are 4*8=32 bits)
+    MTU_IDS = MTU_IDS_New
     RTU_IDS_New = 0x11001001000011111101101010100010  # 第一次執行隨便設(但MTU與RTU要一樣)
+    RTU_IDS_Old = 0
     RTU_K_New = 0x10101101111110000101010001011000    # 第一次執行隨便設(但MTU與RTU要一樣)
+    RTU_K_Old = 0
     RTU_N = MTU_N
     pi = 11001001000011111101101010100010  # pi = 11.001001000011111101101010100010 去掉小數點取32位
     e  = 10101101111110000101010001011000  # e  = 10.101101111110000101010001011000 去掉小數點取32位    
  
+    # Check MTU use IDS_New or IDS_Old
+    if (RTU_IDS_New != MTU_IDS):
+        RTU_IDS_New, RTU_IDS_Old = RTU_IDS_Old, RTU_IDS_New
+    
     # Calculate "n"
     RTU_n = RTU_N ^ RTU_K_New ^ RTU_IDS_New
     
@@ -128,7 +135,7 @@ if __name__ == '__main__':
     RTU_IDS_list = divide_in_parts(RTU_IDS_New, 4)
         
     # Calculate "A, B"
-    RTU_A = QR([RTU_IDS_list[0], RTU_IDS_list[2], RTU_IDS_list[2], RTU_a_list[1]]) #不確定這裡是不是兩個MTU_IDS_list[2]
+    RTU_A = QR([RTU_IDS_list[0], RTU_IDS_list[1], RTU_IDS_list[2], RTU_a_list[1]]) #不確定這裡是不是兩個MTU_IDS_list[2]
     RTU_B = QR([RTU_K_list[0], RTU_K_list[1], RTU_K_list[2], RTU_c_list[1]])        
         
     # divide "A, B" in 3 parts
@@ -166,7 +173,7 @@ if __name__ == '__main__':
         MTU_IDS_list = divide_in_parts(MTU_IDS_New, 4)
         
         # Calculate "A, B"
-        MTU_A = QR([MTU_IDS_list[0], MTU_IDS_list[2], MTU_IDS_list[2], MTU_a_list[1]]) #不確定這裡是不是兩個MTU_IDS_list[2]
+        MTU_A = QR([MTU_IDS_list[0], MTU_IDS_list[1], MTU_IDS_list[2], MTU_a_list[1]]) #不確定這裡是不是兩個MTU_IDS_list[2]
         MTU_B = QR([MTU_K_list[0], MTU_K_list[1], MTU_K_list[2], MTU_c_list[1]])        
         
         # divide "A, B" in 3 parts
