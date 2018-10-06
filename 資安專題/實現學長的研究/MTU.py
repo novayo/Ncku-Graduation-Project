@@ -22,16 +22,16 @@ if __name__ == '__main__':
         MTU_Socket.connect((target_host, target_port))      # s.send(sendstr("Hello"))
         print(MTU_Socket.recv(1024).decode('ascii'))       ##### receive "Connect to RTU!" #####
     except:
-        print("Fail to connect RTU!")
+        print("Fail to connect RTU!\n")
         MTU_Socket.close()
         sys.exit(1)
     
     """ MTU send {IDS, N, R}"""
     # Initial Variable (All of variables are 96 bits)
     IDS_New = 2**(96-1)  # 第一次執行隨便設(但MTU與RTU要一樣)
-    IDS_Old = 0
+    IDS_Old = 2**40
     K_New = 2**48    # 第一次執行隨便設(但MTU與RTU要一樣)
-    K_Old = 0
+    K_Old = 2**20
     n = 0
     pi = 11001001000011111101101010100010  # pi = 11.001001000011111101101010100010 去掉小數點取32位
     e  = 10101101111110000101010001011000  # e  = 10.101101111110000101010001011000 去掉小數點取32位
@@ -55,8 +55,6 @@ if __name__ == '__main__':
     # Calculate "R" 
     R = ap.and32(a_list[0], b_list[0]) | ap.and32(a_list[2], b_list[2]) | ap.and32(a_list[3], b_list[3])
     
-    print("N: ", bin(N))       ############################# 57~62 問題在這
-    print("\n\nR: ", bin(R))
     ##### Send IDS N R #####
     MTU_Socket.send(sendint(IDS_New))
     sleep(0.1)
@@ -66,11 +64,17 @@ if __name__ == '__main__':
     
     
     ##### Receive S #####
-    try:
-        RTU_S = int(MTU_Socket.recv(1024).decode('ascii')[2:], 2) ##### receive S #####
-    except:
-        print(MTU_Socket.recv(1024).decode('ascii')) ##### receive "Mismatch R" #####
+    RTU_S = MTU_Socket.recv(1024).decode('ascii')
+    if (RTU_S == "Mismatch IDS!"):
+        print("Mismatch IDS...\nSending Old IDS") ##### Receive "Mismatch R!" #####
+        MTU_Socket.send(sendint(IDS_Old)) ##### Send IDS_Old #####
         sys.exit(2)
+    elif (RTU_S == "Mismatch R!"):
+        print(RTU_S + "\n") ##### receive "Mismatch R!" #####
+        sys.exit(2)
+    else:
+        RTU_S = int(RTU_S[2:], 2) ##### receive S #####
+    
     
     """ MTU Obtain {S}"""
     # Calculate "c, d"

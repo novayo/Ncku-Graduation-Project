@@ -30,6 +30,14 @@ def QR(list):
     list[0] = list[0] ^ (rotate_left32(and32(list[3], list[2]), 18))
     return (list[0]*2**0) + (list[1]*2**32) + (list[2]*2**64) + (list[3]*2**96)
 
+def QR_Reverse(list): 
+    list[0] = list[0] ^ (rotate_left32(and32(list[3], list[2]), 18))
+    list[3] = list[3] ^ (rotate_left32(and32(list[2], list[1]), 13))
+    list[2] = list[2] ^ (rotate_left32(and32(list[1], list[0]), 9))
+    list[1] = list[1] ^ (rotate_left32(and32(list[0], list[3]), 7))
+    return (list[0]*2**0) + (list[1]*2**32) + (list[2]*2**64) + (list[3]*2**96)
+
+
 # return 128bits    
 def MQR(list): 
     list[1] = and32(list[0],list[1]) ^ (rotate_left32(and32(list[0], list[3]), 7))
