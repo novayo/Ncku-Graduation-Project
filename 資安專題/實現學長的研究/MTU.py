@@ -65,17 +65,12 @@ if __name__ == '__main__':
     
     ##### Receive S #####
     RTU_S = MTU_Socket.recv(1024).decode('ascii')
-    if (RTU_S == "Mismatch IDS!"):
-        print("Mismatch IDS...\nSending Old IDS") ##### Receive "Mismatch R!" #####
-        MTU_Socket.send(sendint(IDS_Old)) ##### Send IDS_Old #####
-        sys.exit(2)
-    elif (RTU_S == "Mismatch R!"):
+    if (RTU_S == "Mismatch IDS!" | RTU_S == "Mismatch R!"):
         print(RTU_S + "\n") ##### receive "Mismatch R!" #####
         sys.exit(2)
-    else:
-        RTU_S = int(RTU_S[2:], 2) ##### receive S #####
-    
-    
+
+
+    RTU_S = int(RTU_S[2:], 2) ##### receive S #####    
     """ MTU Obtain {S}"""
     # Calculate "c, d"
     c = ap.MQR([pi, n_list[0], K_list[1], n_list[2]])
@@ -109,8 +104,8 @@ if __name__ == '__main__':
         IDS_Old, K_Old = IDS_New, K_New
         
         # Calculate "IDS_New, K_New"
-        IDS_New = A_list[0] ^ A_list[1] ^ A_list[2]
-        K_New = B_list[0] ^ B_list[1] ^ B_list[2]
+        IDS_New = A_list[0] + A_list[1] + A_list[2]
+        K_New = B_list[0] + B_list[1] + B_list[2]
     
     print("IDS_New : " , IDS_New)
     print("\n\nK_New : " , K_New)
