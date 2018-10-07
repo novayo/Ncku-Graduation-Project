@@ -65,7 +65,7 @@ if __name__ == '__main__':
     
     ##### Receive S #####
     RTU_S = MTU_Socket.recv(1024).decode('ascii')
-    if (RTU_S == "Mismatch IDS!" | RTU_S == "Mismatch R!"):
+    if ((RTU_S == "Mismatch IDS!") | (RTU_S == "Mismatch R!")):
         print(RTU_S + "\n") ##### receive "Mismatch R!" #####
         sys.exit(2)
 
