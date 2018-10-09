@@ -12,4 +12,13 @@ func main() {
 	}
 	// 因此無窮迴圈只要寫成 for {} 就好
 	fmt.Println(sum)
+
+	pow := []int{1, 2, 4, 8, 16, 32, 64, 128}
+
+	// i拿到的是pow的len()， v拿到的是值
+	// 如果不需要i，就寫_
+	for i, v := range pow {
+		fmt.Printf("2**%d = %d\n", i, v)
+	}
+
 }
